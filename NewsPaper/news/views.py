@@ -10,6 +10,10 @@ from .filters import PostFilter
 from datetime import datetime
 from .forms import PostForm
 
+from django.http import HttpResponse
+from django.views import View
+from .tasks import hello, send_mail_for_sub_test
+
 
 class PostList(ListView):
     model = Post
@@ -92,3 +96,11 @@ class ChangeNews(PermissionRequiredMixin, PostUpdate):
 
 class DeleteNews(PermissionRequiredMixin, PostDelete):
     permission_required = ('news.delete',)
+
+
+class IndexView(View):
+    def get(self, request):
+        # printer.apply_async([10], countdown=10)
+        # hello.delay()
+        send_mail_for_sub_test.delay()
+        return HttpResponse('Hello!')

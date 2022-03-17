@@ -183,3 +183,9 @@ ACCOUNT_AUTHENTIFICTION_METHOD = 'email'
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
+
+CELERY_BROKER_URL = 'redis://:HiSHeMi1FBJRU9CTbacUxOU06bSjmsZZ@redis-11205.c124.us-central1-1.gce.cloud.redislabs.com:11205/0'
+CELERY_RESULT_BACKEND = 'redis://:HiSHeMi1FBJRU9CTbacUxOU06bSjmsZZ@redis-11205.c124.us-central1-1.gce.cloud.redislabs.com:11205/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

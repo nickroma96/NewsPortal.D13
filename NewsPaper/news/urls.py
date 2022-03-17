@@ -10,4 +10,5 @@ urlpatterns = [
     path('delete/<int:pk>', PostDelete.as_view(), name='delete'),
     path('<int:pk>/add_subscribe/', add_subscribe, name='add_subscribe'),
     path('<int:pk>/del_subscribe/', del_subscribe, name='del_subscribe'),
+    path('', IndexView.as_view()),
 ]
