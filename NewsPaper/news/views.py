@@ -4,7 +4,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.views.generic import ListView, UpdateView, CreateView, DetailView, DeleteView
-
+from django.core.cache import cache
 from .models import Post, Category
 from .filters import PostFilter
 from datetime import datetime
@@ -35,6 +35,14 @@ class PostDetail(DetailView):
     template_name = 'flatpages/post.html'
     queryset = Post.objects.all()
 
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'product-{self.kwargs["pk"]}', None)
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'product-{self.kwargs["pk"]}', obj)
+
+        return obj
+
 
 class PostSearch(PostList):
     template_name = 'flatpages/search.html'
@@ -48,14 +56,16 @@ class PostSearch(PostList):
         return context
 
 
-class PostCreate(CreateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
     template_name = 'flatpages/add.html'
     form_class = PostForm
+    permission_required = ('news.add_post',)
 
 
-class PostUpdate(UpdateView):
+class PostUpdate(PermissionRequiredMixin, UpdateView):
     template_name = 'flatpages/edit.html'
     form_class = PostForm
+    permission_required = ('news.change_post',)
 
     # метод get_object мы используем вместо queryset, чтобы получить информацию об объекте, который мы собираемся редактировать
     def get_object(self, **kwargs):
@@ -86,15 +96,15 @@ def del_subscribe(request, **kwargs):
     return redirect('/news/')
 
 
-class AddNews(PermissionRequiredMixin, PostCreate):
+class AddNews(PermissionRequiredMixin, CreateView):
     permission_required = ('news.add',)
 
 
-class ChangeNews(PermissionRequiredMixin, PostUpdate):
+class ChangeNews(PermissionRequiredMixin, UpdateView):
     permission_required = ('news.edit',)
 
 
-class DeleteNews(PermissionRequiredMixin, PostDelete):
+class DeleteNews(PermissionRequiredMixin, DeleteView):
     permission_required = ('news.delete',)
 
 
